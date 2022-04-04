@@ -5,5 +5,5 @@ import uz.pdp.instagramclone.entity.Story;
 
 import java.util.UUID;
 
-public interface StoryRepository extends JpaRepository<Story, Integer> {
+public interface StoryRepository extends JpaRepository<Story, Long> {
 }
