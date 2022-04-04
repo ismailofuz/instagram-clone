@@ -21,5 +21,6 @@ public class Inbox {
     @ManyToOne(cascade = CascadeType.ALL)
     private User receiver;
 
-
+    @ManyToOne
+    private Direct direct;
 }

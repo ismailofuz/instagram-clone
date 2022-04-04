@@ -31,6 +31,4 @@ public class Comment {
 
     @ManyToMany
     private List<User> commentLikedUsers;
-
-
 }

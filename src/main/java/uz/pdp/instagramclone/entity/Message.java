@@ -25,4 +25,7 @@ public class Message {
 
     @CreationTimestamp
     private Timestamp createdAt;
+
+    @ManyToOne
+    private Inbox inbox;
 }

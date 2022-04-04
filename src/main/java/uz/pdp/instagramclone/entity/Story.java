@@ -8,7 +8,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,21 +15,17 @@ import java.util.UUID;
 @Entity(name = "stories")
 public class Story {
     @Id
-    private UUID id = UUID.randomUUID();
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private User user; // qaysi user uni ochgani
 
-    private boolean isHighlighted;
+    private boolean isHighlighted = false;
 
     @CreationTimestamp // doim new bo'lganda saqlaydi
     private Timestamp createdAt;  // 24 hours check
 
     @OneToMany
     private List<Attachment> files;
-
-
-
-
-
 }

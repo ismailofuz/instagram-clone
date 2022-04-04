@@ -17,7 +17,8 @@ import java.util.UUID;
 @Entity(name = "posts")
 public class Post {
     @Id
-    private UUID id = UUID.randomUUID();
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
     @ManyToOne
     private User user;
