@@ -32,7 +32,6 @@ public class Post {
     private List<User> postLikedUsers;
 
     @OneToMany
-    @Size(max = 10,min = 1)
     private List<Attachment> files;
 
 
