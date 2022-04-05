@@ -18,6 +18,9 @@ spring:
   sql:
     init:
       mode: always
+  security:
+    user:
+      name: user
 jwt:
   secretKey: 'instagram-clone'
   expireTime: '36000000'

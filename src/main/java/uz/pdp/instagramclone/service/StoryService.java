@@ -10,9 +10,6 @@ import uz.pdp.instagramclone.payload.StoryDTO;
 import uz.pdp.instagramclone.repository.StoryRepository;
 import uz.pdp.instagramclone.repository.UserRepository;
 
-import java.sql.Timestamp;
-import java.time.LocalTime;
-import java.util.Date;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -31,7 +28,17 @@ public class StoryService {
             story.setUser(optionalUser.get());
             story.setHighlighted(dto.isHighlighted());
             storyRepository.save(story);
+            return new ApiResponse("This story successfully created!", true);
         }
-        return new ApiResponse("This story successfully created!", true);
+        return new ApiResponse("This story not created!", false);
+    }
+
+    public ApiResponse delete(Long id) {
+        Optional<Story> optionalStory = storyRepository.findById(id);
+        if (optionalStory.isPresent()) {
+            storyRepository.deleteById(id);
+            return new ApiResponse("This story successfully deleted!", true);
+        }
+        return new ApiResponse("This story not found on data base!", false);
     }
 }
