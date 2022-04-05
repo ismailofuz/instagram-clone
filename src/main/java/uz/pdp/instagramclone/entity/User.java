@@ -22,7 +22,8 @@ import java.util.UUID;
 public class User {
 
     @Id
-    private UUID id = UUID.randomUUID();
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
     @Column(nullable = false)
     private String name;
@@ -63,16 +64,5 @@ public class User {
 
     // hozir live qilayaptimi yo'qmi ?
     private boolean isLive = false; // default false
-
-
-
-
-
-
-
-
-
-
-
 
 }
