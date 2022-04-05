@@ -20,6 +20,4 @@ public class AttachmentContent {
 
     @OneToOne
     private Attachment attachment;
-
-
 }

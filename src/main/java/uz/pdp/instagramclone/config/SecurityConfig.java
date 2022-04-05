@@ -33,12 +33,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/story/**").permitAll()
-//                .antMatchers("/api/product/**").permitAll()
-//                .antMatchers("/api/orderproduct/**").permitAll()
-//                .antMatchers("/api/order/**").permitAll()
-//                .anyRequest()
-                .antMatchers("/api/**")
+                .antMatchers("/**").permitAll()
+                .anyRequest()
                 .authenticated();
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }

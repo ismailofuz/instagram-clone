@@ -22,6 +22,12 @@ public class StoryController {
     final StoryRepository storyRepository;
     final StoryService storyService;
 
+//    @GetMapping
+//    public HttpEntity<?> getStories(){
+//        List<Story> stories = storyRepository.findAll();
+//        return ResponseEntity.ok().body(stories);
+//    }
+
     @GetMapping
     public HttpEntity<?> getStories(){
         List<Story> stories = storyRepository.findAll();
