@@ -73,6 +73,12 @@ public class User {
     // hozir live qilayaptimi yo'qmi ?
     private boolean isLive = false; // default false
 
+    @ManyToMany
+    private Set<Post> likedPosts;
+
+    @ManyToMany
+    private Set<Post> savedPosts;
+
     public User(String name, String username, String password, String email, String phoneNumber) {
         this.name = name;
         this.username = username;
