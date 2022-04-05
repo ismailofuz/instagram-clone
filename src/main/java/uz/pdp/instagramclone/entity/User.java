@@ -31,6 +31,12 @@ public class User {
     @Column(unique = true,nullable = false)
     private String username;
 
+    @Column(nullable = false,unique = true)
+    private String phoneNumber;
+
+    @Column(nullable = false)
+    private String password;
+
     @Email // unique
     @Column(unique = true)
     private String email; // optional
@@ -40,7 +46,7 @@ public class User {
     private String bio; // optional
 
     @OneToOne
-    private Attachment profilePhoto;
+    private Attachment profilePhoto; //optional
 
     @CreationTimestamp // doim new bo'lganda saqlaydi
     private Timestamp createdAt;
@@ -64,5 +70,11 @@ public class User {
 
     // hozir live qilayaptimi yo'qmi ?
     private boolean isLive = false; // default false
+
+    @ManyToMany
+    private Set<Post> likedPosts;
+
+    @ManyToMany
+    private Set<Post> savedPosts;
 
 }

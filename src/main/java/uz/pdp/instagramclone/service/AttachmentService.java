@@ -3,6 +3,7 @@ package uz.pdp.instagramclone.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import uz.pdp.instagramclone.entity.Attachment;
@@ -11,9 +12,11 @@ import uz.pdp.instagramclone.payload.ApiResponse;
 import uz.pdp.instagramclone.repository.AttachmentContentRepository;
 import uz.pdp.instagramclone.repository.AttachmentRepository;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AttachmentService {
@@ -49,5 +52,26 @@ public class AttachmentService {
             }
         }
         return new ApiResponse("Mana", true);
+    }
+
+    public void download(Integer id, HttpServletResponse response) {
+
+        Optional<Attachment> optionalAttachment = attachmentRepository.findById(id);
+
+        if (optionalAttachment.isPresent()) {
+            Attachment attachment = optionalAttachment.get();
+            Optional<AttachmentContent> contentOptional = attachmentContentRepository.findByAttachmentId(id);
+            if (contentOptional.isPresent()) {
+                AttachmentContent attachmentContent = contentOptional.get();
+                response.setHeader("Content-Disposition",
+                        "attachment; filename=" + attachment.getFileOriginalName());
+                response.setContentType(attachment.getContentType());
+                try {
+                    FileCopyUtils.copy(attachmentContent.getAsosiyContent(), response.getOutputStream());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
