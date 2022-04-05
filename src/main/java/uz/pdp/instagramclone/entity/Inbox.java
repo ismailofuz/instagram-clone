@@ -15,6 +15,8 @@ public class Inbox {
     @Id
     private UUID id = UUID.randomUUID();
 
+
+
     @ManyToOne(cascade = CascadeType.ALL)
     private User receiver;
 
