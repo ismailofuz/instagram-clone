@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class StoryDTO {
-    private Integer userId;
+    private Long userId;
 
     private boolean isHighlighted = false;
 

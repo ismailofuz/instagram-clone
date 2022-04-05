@@ -29,7 +29,7 @@ public class StoryController {
     }
 
     @GetMapping("/{id}")
-    public HttpEntity<?> getStory(@PathVariable Integer id){
+    public HttpEntity<?> getStory(@PathVariable Long id){
         Optional<Story> optionalStory = storyRepository.findById(id);
         if (optionalStory.isPresent()) {
             return ResponseEntity.ok().body(optionalStory);
@@ -41,5 +41,11 @@ public class StoryController {
     public HttpEntity<?> add(@RequestBody StoryDTO dto){
         ApiResponse apiResponse = storyService.add(dto);
         return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.CREATED : HttpStatus.CONFLICT).body(apiResponse.getObject());
+    }
+
+    @DeleteMapping("/{id}")
+    public HttpEntity<?> delete(@PathVariable Long id){
+        ApiResponse apiResponse = storyService.delete(id);
+        return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.OK : HttpStatus.NOT_FOUND).body(apiResponse);
     }
 }
