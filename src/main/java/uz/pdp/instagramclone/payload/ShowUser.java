@@ -3,11 +3,17 @@ package uz.pdp.instagramclone.payload;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import uz.pdp.instagramclone.entity.User;
+
+import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class LoginDTO {
-    private String login; // username,email,phoneNumber
-    private String password;
+public class ShowUser {
+
+    private User user;
+
+    private boolean isFollowed;
+
 }

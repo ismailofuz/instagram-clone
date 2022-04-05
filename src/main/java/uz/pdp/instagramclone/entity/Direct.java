@@ -11,7 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 @Entity
-public class Direct {
+public class Direct { // nimasi dir kami bor
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

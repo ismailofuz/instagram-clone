@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -15,10 +16,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 @Entity(name = "posts")
+@Transactional
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @ManyToOne
     private User user;
@@ -34,6 +36,9 @@ public class Post {
 
     @OneToMany
     private List<Attachment> files;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Message> comments; // bular istalgancha comment bo'ladi
 
 
 }
