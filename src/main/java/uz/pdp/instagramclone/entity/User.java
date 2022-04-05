@@ -9,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.List;
@@ -31,10 +32,11 @@ public class User {
     @Column(unique = true,nullable = false)
     private String username;
 
-    @Column(nullable = false,unique = true)
+    @Column(unique = true)
     private String phoneNumber;
 
     @Column(nullable = false)
+    @Size(min = 6,message = "Password must be more than 6")
     private String password;
 
     @Email // unique
@@ -46,7 +48,7 @@ public class User {
     private String bio; // optional
 
     @OneToOne
-    private Attachment profilePhoto; //optional
+    private Attachment profilePhoto;
 
     @CreationTimestamp // doim new bo'lganda saqlaydi
     private Timestamp createdAt;
@@ -76,5 +78,13 @@ public class User {
 
     @ManyToMany
     private Set<Post> savedPosts;
+
+    public User(String name, String username, String password, String email, String phoneNumber) {
+        this.name = name;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
 
 }
