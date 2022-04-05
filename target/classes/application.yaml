@@ -5,7 +5,7 @@ server:
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/instagram
-    password: '0706'
+    password: '3812'
     username: 'postgres'
   jpa:
     show-sql: true
