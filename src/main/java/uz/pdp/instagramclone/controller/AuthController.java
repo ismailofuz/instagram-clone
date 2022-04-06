@@ -78,7 +78,7 @@ public class AuthController {
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public HttpEntity<?> addUser(@RequestBody Registration registration){
         ApiResponse apiResponse = userService.addUser(registration);
         return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.CREATED : HttpStatus.CONFLICT).body(apiResponse);
