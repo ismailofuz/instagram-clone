@@ -29,6 +29,5 @@ public class Configurationnima {
         properties.put("mail.debug","true");
 
         return mailSender;
-
     }
 }
