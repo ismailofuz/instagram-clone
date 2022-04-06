@@ -28,6 +28,8 @@ spring:
     user:
       name: user
       password: user
+  main:
+    allow-circular-references: true
 jwt:
   secretKey: 'instagram-clone'
   expireTime: '36000000'
