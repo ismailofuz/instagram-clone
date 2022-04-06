@@ -7,7 +7,7 @@ import uz.pdp.instagramclone.entity.AttachmentContent;
 import java.util.Optional;
 
 @Repository
-public interface AttachmentContentRepository extends JpaRepository<AttachmentContent, Integer> {
-    Optional<AttachmentContent> findByAttachmentId(Integer attachment_id);
+public interface AttachmentContentRepository extends JpaRepository<AttachmentContent, Long> {
+    Optional<AttachmentContent> findByAttachmentId(Long attachment_id);
 
 }

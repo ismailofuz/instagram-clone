@@ -16,13 +16,8 @@ import uz.pdp.instagramclone.service.AttachmentService;
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/attachment")
@@ -80,7 +75,7 @@ public class AttachmentController {
     }
 
     @GetMapping("/download/{id}")
-    public void getFile(@PathVariable Integer id, HttpServletResponse response) throws IOException {
+    public void getFile(@PathVariable Long id, HttpServletResponse response) throws IOException {
 
         attachmentService.download(id,response);
 

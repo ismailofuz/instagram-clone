@@ -54,7 +54,7 @@ public class AttachmentService {
         return new ApiResponse("Mana", true);
     }
 
-    public void download(Integer id, HttpServletResponse response) {
+    public void download(Long id, HttpServletResponse response) {
 
         Optional<Attachment> optionalAttachment = attachmentRepository.findById(id);
 
