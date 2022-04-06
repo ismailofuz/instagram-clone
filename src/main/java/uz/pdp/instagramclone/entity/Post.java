@@ -40,5 +40,4 @@ public class Post {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Message> comments; // bular istalgancha comment bo'ladi
 
-
 }

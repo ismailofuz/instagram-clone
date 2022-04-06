@@ -6,21 +6,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity(name = "users")
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,6 +61,12 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Story> stories;
 
+     @JsonIgnore // bu ko'rimasligi uchun
+    @OneToMany(mappedBy = "user")
+    private List<Post> posts;
+
+
+
     // followerlar va following :
 
     @ManyToMany(cascade = CascadeType.ALL)
@@ -79,6 +84,8 @@ public class User {
     @ManyToMany
     private Set<Post> savedPosts;
 
+
+
     public User(String name, String username, String password, String email, String phoneNumber) {
         this.name = name;
         this.username = username;
@@ -87,4 +94,38 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
+    private  boolean accountNonExpired = true;
+    private  boolean accountNonLocked = true;
+    private  boolean credentialsNonExpired = true;
+    private  boolean enabled ;
+
+
+    //=============================Spring security always needs
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null; // ahamiyatsz
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return accountNonExpired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return accountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return credentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    private String emailCode;
 }

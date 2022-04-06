@@ -6,9 +6,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.pdp.instagramclone.payload.ApiResponse;
+import uz.pdp.instagramclone.payload.PostDto;
 import uz.pdp.instagramclone.service.PostService;
 
 @RequestMapping("/api/comments")
@@ -22,9 +24,9 @@ public class PostController {
      * @param id
      * @return
      */
-    @GetMapping("/{id}")
-    public HttpEntity<?> getOne(@PathVariable Long id){
-        ApiResponse apiResponse  = postService.getOnePost(id);
+    @GetMapping("/{user_id}/{id}")
+    public HttpEntity<?> getOne(@PathVariable Long id,@PathVariable Long user_id){
+        ApiResponse apiResponse  = postService.getOnePost(id,user_id);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200:404).body(apiResponse);
     }
 
@@ -63,6 +65,27 @@ public class PostController {
         ApiResponse apiResponse = postService.addToLikedPosts(post_id,user_id);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200:409).body(apiResponse);
     }
+
+    /**
+     * showing the reel in home page
+     * @param user_id
+     * @return
+     */
+    // userga kelgan hamma postlarni ko'rsatish xuddi reelga o'shagan
+    @GetMapping("/{user_id}/reel")
+    public ResponseEntity<?> reel(@PathVariable Long user_id){
+        ApiResponse apiResponse = postService.reel(user_id);
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    @PostMapping("/{user_id}/{attachment_id}")
+    public HttpEntity<?> addPost(@PathVariable Long user_id, @RequestBody PostDto postDto,@PathVariable Long attachment_id){
+        ApiResponse apiResponse = postService.addPost(user_id,attachment_id, postDto);
+        return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.CREATED : HttpStatus.CONFLICT).body(apiResponse);
+    }
+
+
+
 
 
 

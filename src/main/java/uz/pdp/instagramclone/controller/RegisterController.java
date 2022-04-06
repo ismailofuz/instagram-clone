@@ -17,11 +17,7 @@ import uz.pdp.instagramclone.service.UserService;
 @RequestMapping("/api/register")
 public class RegisterController {
 
-    final UserService userService;
+    private final UserService userService;
 
-    @PostMapping
-    public HttpEntity<?> addUser(@RequestBody Registration registration){
-        ApiResponse apiResponse = userService.addUser(registration);
-        return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.CREATED : HttpStatus.CONFLICT).body(apiResponse);
-    }
+
 }
