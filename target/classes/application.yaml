@@ -1,11 +1,11 @@
 server:
-  port: 80
+  port: 81
   error:
     include-message: always
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/instagram
-    password: '0706'
+    password: '3812'
     username: 'postgres'
 #spring:
 #  datasource:
@@ -16,7 +16,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   servlet:
     multipart:
       max-file-size: 20MB
@@ -28,17 +28,9 @@ spring:
     user:
       name: user
       password: user
-
-  main:
-    allow-circular-references: true
-
-
 jwt:
   secretKey: 'instagram-clone'
   expireTime: '36000000'
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
-
-
-
