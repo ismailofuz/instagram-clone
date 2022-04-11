@@ -1,7 +1,9 @@
 package uz.pdp.instagramclone.controller;
 
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.DomainEvents;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -13,7 +15,7 @@ import uz.pdp.instagramclone.payload.ApiResponse;
 import uz.pdp.instagramclone.payload.PostDto;
 import uz.pdp.instagramclone.service.PostService;
 
-@RequestMapping("/api/comments")
+@RequestMapping("/api/posts")
 @RequiredArgsConstructor
 @RestController
 public class PostController {
@@ -83,6 +85,24 @@ public class PostController {
         ApiResponse apiResponse = postService.addPost(user_id,attachment_id, postDto);
         return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.CREATED : HttpStatus.CONFLICT).body(apiResponse);
     }
+
+
+    // deleting post :
+    @DeleteMapping("/{user_id}/{post_id}")
+    public HttpEntity<?> deletePost(@PathVariable Long user_id,@PathVariable Long post_id){
+        ApiResponse apiResponse = postService.deletePost(post_id,user_id);
+
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
+    }
+
+//    all posts
+
+    @GetMapping("/list")
+    public HttpEntity<?> all(@RequestParam int page){
+        ApiResponse apiResponse = postService.all(page);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
+    }
+
 
 
 

@@ -1,4 +1,4 @@
-package uz.pdp.instagramclone.entity;
+package uz.pdp.instagramclone.payload;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

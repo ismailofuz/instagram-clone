@@ -2,7 +2,9 @@ package uz.pdp.instagramclone.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import uz.pdp.instagramclone.entity.Attachment;
 import uz.pdp.instagramclone.entity.Post;
@@ -84,10 +86,10 @@ public class PostService {
                 if (!savedPosts.add(post)) {
                     savedPosts.remove(post);
 
-                    userRepository.save(user);
 
-                    return new ApiResponse("saved to saved posts", true, post);
                 }
+                    userRepository.save(user);
+                    return new ApiResponse("saved to saved posts", true, post);
             }
         }
         return new ApiResponse("something went wrong", false);
@@ -159,5 +161,30 @@ public class PostService {
             }
         }
         return new ApiResponse("something went wrong", false);
+    }
+
+    public ApiResponse deletePost(Long post_id, Long user_id) {
+        if (userRepository.existsById(user_id)) {
+            User user = userRepository.getById(user_id);
+            if (postRepository.existsById(post_id)) {
+                Post post = postRepository.getById(post_id);
+                if (user.getPosts().contains(post)){
+                    user.getPosts().remove(post);
+                    return new ApiResponse("deleted",true);
+                }
+            }
+        }
+        return new ApiResponse("Something went wrong",false);
+    }
+
+    public ApiResponse all(int page) {
+
+        Pageable pageable = PageRequest.of(page,18, Sort.by("createdAt"));
+        Page<Post> all = postRepository.findAll(pageable);
+
+        if (page  > all.getTotalPages()){
+            return new ApiResponse("Page is not enough",false);
+        }
+        return new ApiResponse("All",true,page);
     }
 }

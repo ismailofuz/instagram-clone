@@ -5,17 +5,26 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.UUID;
+import java.util.List;
+
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
-public class Direct { // nimasi dir kami bor
+public class Direct {
+    // nimasi dir kami bor
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
-    @OneToOne
-    private User user;
+    @ManyToOne
+    private User receiver; // kiming directi ekanligi :
+
+    @ManyToOne
+    private User sender;
+
+    @OneToMany
+    private List<Message> messages;
+
 }

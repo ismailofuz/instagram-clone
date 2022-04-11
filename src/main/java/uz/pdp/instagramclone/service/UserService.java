@@ -1,11 +1,10 @@
 package uz.pdp.instagramclone.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import uz.pdp.instagramclone.config.MailSender;
-import uz.pdp.instagramclone.entity.Registration;
+import uz.pdp.instagramclone.payload.Registration;
 import uz.pdp.instagramclone.entity.User;
 import uz.pdp.instagramclone.payload.ApiResponse;
 import uz.pdp.instagramclone.repository.UserRepository;
@@ -61,7 +60,7 @@ public class UserService {
                 message.setSentDate(new Date());
                 mailSender.getEmail().send(message);
 
-                return new ApiResponse("check your email",true);
+                return new ApiResponse("check your email code is sent",true);
 
             } catch (MessagingException e) {
                 e.printStackTrace();
@@ -74,18 +73,5 @@ public class UserService {
         return new ApiResponse("Something went wrong!", false);
     }
 
-//    public boolean sendEmail(String sendingEmail, String emailCode) {
-//        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-//
-//        simpleMailMessage.setFrom("Test@gmail.com");
-//        simpleMailMessage.setTo(sendingEmail);
-//        simpleMailMessage.setSubject("Verification");
-//        simpleMailMessage.setText("code : " + emailCode);
-//        try {
-//            javaMailSender.send(simpleMailMessage);
-//            return true;
-//        } catch (MailException e) {
-//            return false;
-//        }
-//    }
+
 }

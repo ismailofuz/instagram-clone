@@ -1,8 +1,5 @@
 package uz.pdp.instagramclone.controller;
 
-//import com.example.soliqjwttask.dto.LoginDTO;
-//import com.example.soliqjwttask.security.JwtProvider;
-//import com.example.soliqjwttask.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,13 +8,25 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import uz.pdp.instagramclone.entity.Registration;
+import uz.pdp.instagramclone.entity.User;
+import uz.pdp.instagramclone.payload.Registration;
 import uz.pdp.instagramclone.payload.ApiResponse;
 import uz.pdp.instagramclone.payload.LoginDTO;
+import uz.pdp.instagramclone.payload.UserDto;
 import uz.pdp.instagramclone.security.JwtProvider;
 import uz.pdp.instagramclone.service.AuthService;
 import uz.pdp.instagramclone.service.UserService;
+
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -36,11 +45,26 @@ public class AuthController {
     JwtProvider jwtProvider;
 
     @PostMapping("/login")
-    public HttpEntity<?> login(@RequestBody LoginDTO loginDTO){
+    public HttpEntity<?> login(@RequestBody LoginDTO dto){
        // String token=jwtProvider.generateToken(loginDTO.getLogin());
-        ApiResponse apiResponse = authService.login(loginDTO);
+        ApiResponse apiResponse;
+        try {
+            Authentication authentication = authenticationManager.
+                    authenticate(new UsernamePasswordAuthenticationToken(dto.getLogin(), dto.getPassword()));
 
-        return ResponseEntity.status(apiResponse.isSuccess() ? 200:409).body(apiResponse);
+            User user = (User) authentication.getPrincipal();
+
+            // kirgan odamga token berish kk
+            String token = jwtProvider.generateToken(user.getUsername());
+
+            apiResponse=  new ApiResponse("Your token : "+token,true,user);
+
+        } catch (AuthenticationException e) {
+            apiResponse =  new ApiResponse("Something went wrong",false);
+        }
+
+
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
     }
 
     @GetMapping("/search")
@@ -84,5 +108,54 @@ public class AuthController {
         return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.CREATED : HttpStatus.CONFLICT).body(apiResponse);
     }
 
+    // follow request :/**
+
+    /**
+     * user follow qiladi agar avval follow qilmagan bo'lsa akas holsa unfollow
+     * @param user_id
+     * @param following_user_id
+     * @return
+     */
+    @PostMapping("/follow/{user_id}/{following_user_id}")
+    public HttpEntity<?> follow(@PathVariable Long user_id,@PathVariable Long following_user_id){
+        ApiResponse apiResponse = authService.follow(user_id,following_user_id);
+
+        return ResponseEntity.status(apiResponse.isSuccess() ? 201 : 409).body(apiResponse);
+    }
+
+    /**
+     * edit user profile settings name,username ...
+     * @param dto
+     * @return
+     */
+    // edit user :
+    @PutMapping("/edit")
+    public HttpEntity<?> edit(@Valid @RequestBody UserDto dto){
+        ApiResponse apiResponse = authService.editProfile(dto);
+
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
+    }
+
+//    editing profilePhoto
+    @PatchMapping("/editProfilePhoto/{attachment_id}")
+    public HttpEntity<?> editProfilePhoto(@PathVariable Long attachment_id){
+        ApiResponse apiResponse = authService.editProfilePhoto(attachment_id);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
+    }
+
+
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
+    }
 
 }

@@ -16,11 +16,11 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   servlet:
     multipart:
-      max-file-size: 20MB
-      max-request-size: 20MB
+      max-file-size: 2000MB
+      max-request-size: 2000MB
   sql:
     init:
       mode: always

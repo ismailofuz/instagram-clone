@@ -1,27 +1,24 @@
 package uz.pdp.instagramclone.service;
 
-//import com.example.soliqjwttask.entity.User;
-//import com.example.soliqjwttask.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import uz.pdp.instagramclone.config.SecurityConfig;
+import uz.pdp.instagramclone.entity.Attachment;
 import uz.pdp.instagramclone.entity.User;
 import uz.pdp.instagramclone.payload.ApiResponse;
-import uz.pdp.instagramclone.payload.LoginDTO;
 import uz.pdp.instagramclone.payload.ShowUser;
+import uz.pdp.instagramclone.payload.UserDto;
+import uz.pdp.instagramclone.repository.AttachmentRepository;
 import uz.pdp.instagramclone.repository.UserRepository;
-import uz.pdp.instagramclone.security.JwtProvider;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class AuthService implements UserDetailsService {
@@ -29,10 +26,7 @@ public class AuthService implements UserDetailsService {
     UserRepository userRepository;
 
     @Autowired
-    JwtProvider jwtProvider;
-
-    @Autowired
-    SecurityConfig securityConfig;
+    AttachmentRepository attachmentRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -40,36 +34,10 @@ public class AuthService implements UserDetailsService {
     }
 
 
-    public ApiResponse login(LoginDTO dto) {
-        //email,phoneNumber,username bo'lishi mumkin
-        String login = dto.getLogin();
 
-
-
-        for (User user : userRepository.findAll()) {
-            if (user.getEmail().equals(login) || user.getUsername().equals(login)|| user.getPhoneNumber().equals(login)){
-                if (user.getPassword().equals(dto.getPassword())){
-                    Authentication authentication = null;
-                    try {
-                        authentication = securityConfig.authenticationManagerBean().authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-                    User user1 = (User) authentication;
-
-
-                    String token = jwtProvider.generateToken(user1.getUsername());
-                    return new ApiResponse("User found and token :"+token,true,user);
-                    } catch (AuthenticationException e) {
-                        return new ApiResponse("Something(authentication da) went wrong",false);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        return new ApiResponse("Something went wrong",false);
-    }
 
     public ApiResponse searchByUserName(String username, Pageable pageable) {
-        Page<User> allByNameContains = userRepository.findAllByNameContains(username, pageable);
+        Page<User> allByNameContains = userRepository.findAllByUsernameContains(username, pageable);
 
         return new ApiResponse("Found",true,allByNameContains);
     }
@@ -79,6 +47,10 @@ public class AuthService implements UserDetailsService {
             if (userRepository.existsById(user_profile)) {
                 User currentUser = userRepository.getById(current_user_id);
                 User userProfile = userRepository.getById(user_profile);
+
+                if (currentUser.equals(userProfile)){
+                    return new ApiResponse("This is user profile",true,currentUser);
+                }
 
                 ShowUser showUser = new ShowUser();
                 showUser.setUser(userProfile);
@@ -94,14 +66,72 @@ public class AuthService implements UserDetailsService {
         Optional<User> userByEmail = userRepository.findUserByEmail(email);
         if (userByEmail.isPresent()) {
             User user = userByEmail.get();
-            if (user.getEmailCode().equals(email)){
+            if (user.getEmailCode().equals(emailCode)){
                 user.setEnabled(true);
                 userRepository.save(user); // user update bo'ldi
                 return new ApiResponse("Email verified successfully",true,user);
             }
+            userRepository.delete(user); // user o'chadi
         }
         return new ApiResponse("Something went wrong",false);
     }
 
+    public ApiResponse follow(Long user_id, Long following_user_id) {
+        if (userRepository.findById(user_id).isPresent()) {
+            User currentUser = userRepository.getById(user_id);
+            if (userRepository.existsById(following_user_id)){
+                User user = userRepository.getById(following_user_id);
 
+                Set<User> followings = currentUser.getFollowing();
+                if (!followings.add(user)) {
+                    followings.remove(user);
+                }
+                userRepository.save(user);
+                return new ApiResponse("Successfully done",true);
+            }
+        }
+        return new ApiResponse("User not found with current id",false);
+    }
+
+    public ApiResponse editProfile(UserDto dto) {
+        Optional<User> optionalUser = userRepository.findByUsername(dto.getUsername());
+        User user = optionalUser.get();
+
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+
+        if (user.getId() != principal.getId()){
+            return new ApiResponse("This username already taken",false);
+        }
+
+
+        principal.setEmail(dto.getEmail());
+        principal.setBio(dto.getBio() !=null ? dto.getBio() : "");
+        principal.setName(dto.getName());
+        principal.setWebsite(dto.getWebsite());
+
+        User save = userRepository.save(principal);
+
+        return new ApiResponse("User is updated successfully",true,save);
+    }
+
+    public ApiResponse editProfilePhoto(Long attachment_id) {
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // checking attachment exists or not ?
+
+
+        Optional<Attachment> optionalAttachment = attachmentRepository.findById(attachment_id);
+
+        if (optionalAttachment.isPresent()) {
+            Attachment newPhoto = optionalAttachment.get();
+
+            principal.setProfilePhoto(newPhoto);
+            User save = userRepository.save(principal);
+
+            return new ApiResponse("User photo updated",true,save);
+        } else {
+            return new ApiResponse("Attachment not found",false);
+        }
+    }
 }

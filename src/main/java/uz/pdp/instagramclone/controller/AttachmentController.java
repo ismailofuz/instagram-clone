@@ -71,7 +71,7 @@ public class AttachmentController {
             }
         }
 //        MultipartFile file = request.getFile(fileNames.next());
-        return "Xatolik";
+        return "Xatolik request multipart request emas";
     }
 
     @GetMapping("/download/{id}")
