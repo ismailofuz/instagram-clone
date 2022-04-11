@@ -26,15 +26,15 @@ public class UserService {
         if (userRepository.existsByUsernameIgnoreCase(registration.getUsername())) {
             return new ApiResponse("This username isn't available. Please try another.", false);
         }
-        if (userRepository.existsByEmailIgnoreCase(registration.getRegister())) {
+        if (userRepository.existsByEmailIgnoreCase(registration.getEmail())) {
             return new ApiResponse("This email isn't available. Please try another.", true);
         }
         User user = new User();
 
-        boolean contains = registration.getRegister().contains("@");
+        boolean contains = registration.getEmail().contains("@");
         if (contains) {
 
-            user.setEmail(registration.getRegister());
+            user.setEmail(registration.getEmail());
             user.setName(registration.getFullName());
             user.setUsername(registration.getUsername());
             user.setPassword(registration.getPassword());
@@ -53,7 +53,7 @@ public class UserService {
                 mimeBodyPart.addHeader("content-type", "html/text");
             message.setFrom("pdp@gmail.com");
 
-            message.setTo(registration.getRegister());
+            message.setTo(registration.getEmail());
 
                 message.setSubject("Confirmation code");
                 message.setText(emailCode);
